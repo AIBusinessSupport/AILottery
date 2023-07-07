@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from keras.models import load_model
-
+from keras import backend as K
 from download import dataset_loading
 def RNN_predict_new_numbers_simple(model_name):
 	dataset_loading()
@@ -21,7 +21,7 @@ def RNN_predict_new_numbers_simple(model_name):
 		if item - num1 <= 0.5:
 			numbers.append(num1)
 			probs.append(1 - abs(num1 - item))
-		else:
+		else: 
 			numbers.append(num2)
 			probs.append(1 - abs(num2 - item))
 	return numbers, probs

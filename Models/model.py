@@ -1,4 +1,4 @@
-from keras.layers import Dense, Input, Reshape, Conv2D, ReLU, BatchNormalization, Flatten, AveragePooling2D, Add, LSTM, ELU
+from keras.layers import Dense, Input, Reshape, Conv2D, ReLU, BatchNormalization, Flatten, AveragePooling2D, Add, LSTM, ELU, SimpleRNN, Bidirectional, Dropout
 from keras.models import Model, Sequential
 
 
@@ -31,11 +31,16 @@ def CNN(params):
 ##
 def RNN(params):
 	model = Sequential()
-	model.add(LSTM(params[1], return_sequences=True, input_shape=(params[0], 20)))
+	model.add(SimpleRNN(units=params[1], activation="tanh", input_shape=(params[0], 20)))
+	#model.add(LSTM(params[1], return_sequences=True, input_shape=(params[0], 20)))
 	for param in params[2:-2]:
-		model.add(LSTM(param, return_sequences=True))
-	model.add(LSTM(params[-2]))
+		model.add(Dropout(0.001))
+		model.add(Bidirectional(LSTM(param, return_sequences=True)))
+		model.add(SimpleRNN(units=params, activation = "tanh", return_sequences = True))
+	model.add(Bidirectional(LSTM(params[-2], return_sequences=True)))
+	model.add(Flatten())
 #    model.add(Dense(params[-1], activation=None))
 	model.add(Dense(params[-1], activation='relu'))
+
     
 	return model

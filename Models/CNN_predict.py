@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from keras.models import load_model
+from keras import backend as K
 
 from download import dataset_loading
 def CNN_predict_new_numbers_simple(model_name):
@@ -12,6 +13,7 @@ def CNN_predict_new_numbers_simple(model_name):
 	all_data = series.values[:, 3:]
 	x = all_data[-n_input_size:] / 80
 	x = np.expand_dims(x, 0).astype('float32')
+	K.clear_session()
 	result = model.predict(x)[0] * 40 + 40
 
 	numbers, probs = [], []
