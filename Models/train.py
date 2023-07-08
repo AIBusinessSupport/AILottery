@@ -106,10 +106,10 @@ def RNN_train(params, param_str, thread, new_training=True):
 	all_data = series.values[:, 3:]
 	x, y = [], []
 	for i in range(n_input_size, len(all_data)):
-		x.append(all_data[i - n_input_size:i])
+		x.append(np.reshape(all_data[i - n_input_size:i], (-1)))
 		y.append(all_data[i])
-	x = np.array(x, dtype=np.float) / 80
-	y = np.array(y, dtype=np.float)
+	x = np.array(x).astype('float32') / 80
+	y = np.array(y).astype('float32')
 	indices = np.arange(len(x))
 	np.random.shuffle(indices)
 	x = x[indices]
