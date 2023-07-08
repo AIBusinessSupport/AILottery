@@ -127,7 +127,7 @@ def RNN_train(params, param_str, thread, new_training=True):
 	model_path = os.path.join(model_folder2, 'model')
 	with open(os.path.join(model_folder2, 'param_str.txt'), 'w') as f:
 		f.write(param_str + '\n' + series.values[-1, 1].strip() + ', ' + str(series.values[-1, 2]))
-	H = model.fit(x, y, epochs=EPOCHS, verbose=0, batch_size=batch_size, validation_split=validation_split, callbacks=[ModelCheckpoint(filepath=model_path, monitor='val_loss', save_best_only=True)])
+	model.fit(x, y, epochs=EPOCHS, verbose=0, batch_size=batch_size, validation_split=validation_split, callbacks=[ModelCheckpoint(filepath=model_path, monitor='val_loss', save_best_only=True)])
 	
 	model_folder1 = os.path.join(FFNN_folder1, 'model-' + param_str.split(',')[0])
 	os.makedirs(model_folder1)
