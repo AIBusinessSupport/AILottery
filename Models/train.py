@@ -81,17 +81,17 @@ def CNN_train(params, param_str, thread, new_training=True):
 	model = CNN(neurons)
 	model.compile(loss="mse", optimizer=opt)
 	model.summary()
-	FFNN_folder1 = os.path.join(Models_trained_folder, 'CNN')
-	FFNN_folder2 = os.path.join(Models_training_folder, 'CNN')
+	CNN_folder1 = os.path.join(Models_trained_folder, 'CNN')
+	CNN_folder2 = os.path.join(Models_training_folder, 'CNN')
 
-	model_folder2 = os.path.join(FFNN_folder2, 'model-' + param_str.split(',')[0])
+	model_folder2 = os.path.join(CNN_folder2, 'model-' + param_str.split(',')[0])
 	os.makedirs(model_folder2)
 	model_path = os.path.join(model_folder2, 'model')
 	with open(os.path.join(model_folder2, 'param_str.txt'), 'w') as f:
 		f.write(param_str + '\n' + series.values[-1, 1].strip() + ', ' + str(series.values[-1, 2]))
-	H = model.fit(x, y, epochs=EPOCHS, verbose=0, batch_size=batch_size, validation_split=validation_split, callbacks=[ModelCheckpoint(filepath=model_path, monitor='val_loss', save_best_only=True)])
+	model.fit(x, y, epochs=EPOCHS, verbose=0, batch_size=batch_size, validation_split=validation_split, callbacks=[ModelCheckpoint(filepath=model_path, monitor='val_loss', save_best_only=True)])
 	
-	model_folder1 = os.path.join(FFNN_folder1, 'model-' + param_str.split(',')[0])
+	model_folder1 = os.path.join(CNN_folder1, 'model-' + param_str.split(',')[0])
 	os.makedirs(model_folder1)
 	shutil.move(os.path.join(model_folder2, 'param_str.txt'), os.path.join(model_folder1, 'param_str.txt'))
 	shutil.move(os.path.join(model_folder2, 'model'), os.path.join(model_folder1, 'model'))
@@ -106,7 +106,7 @@ def RNN_train(params, param_str, thread, new_training=True):
 	all_data = series.values[:, 3:]
 	x, y = [], []
 	for i in range(n_input_size, len(all_data)):
-		x.append(np.reshape(all_data[i - n_input_size:i], (-1)))
+		x.append(all_data[i - n_input_size:i])
 		y.append(all_data[i])
 	x = np.array(x).astype('float32') / 80
 	y = np.array(y).astype('float32')
@@ -119,17 +119,17 @@ def RNN_train(params, param_str, thread, new_training=True):
 	model = RNN(neurons)
 	model.compile(loss="mse", optimizer=opt)
 	model.summary()
-	FFNN_folder1 = os.path.join(Models_trained_folder, 'RNN')
-	FFNN_folder2 = os.path.join(Models_training_folder, 'RNN')
+	RNN_folder1 = os.path.join(Models_trained_folder, 'RNN')
+	RNN_folder2 = os.path.join(Models_training_folder, 'RNN')
 
-	model_folder2 = os.path.join(FFNN_folder2, 'model-' + param_str.split(',')[0])
+	model_folder2 = os.path.join(RNN_folder2, 'model-' + param_str.split(',')[0])
 	os.makedirs(model_folder2)
 	model_path = os.path.join(model_folder2, 'model')
 	with open(os.path.join(model_folder2, 'param_str.txt'), 'w') as f:
 		f.write(param_str + '\n' + series.values[-1, 1].strip() + ', ' + str(series.values[-1, 2]))
 	model.fit(x, y, epochs=EPOCHS, verbose=0, batch_size=batch_size, validation_split=validation_split, callbacks=[ModelCheckpoint(filepath=model_path, monitor='val_loss', save_best_only=True)])
 	
-	model_folder1 = os.path.join(FFNN_folder1, 'model-' + param_str.split(',')[0])
+	model_folder1 = os.path.join(RNN_folder1, 'model-' + param_str.split(',')[0])
 	os.makedirs(model_folder1)
 	shutil.move(os.path.join(model_folder2, 'param_str.txt'), os.path.join(model_folder1, 'param_str.txt'))
 	shutil.move(os.path.join(model_folder2, 'model'), os.path.join(model_folder1, 'model'))
