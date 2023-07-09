@@ -38,9 +38,8 @@ def RNN(params):
 		model.add(Bidirectional(LSTM(param, return_sequences=True)))
 		model.add(SimpleRNN(units=params, activation = "tanh", return_sequences = True))
 	model.add(Bidirectional(LSTM(params[-2], return_sequences=True)))
+	model.add(SimpleRNN(units=params[2]))
 	model.add(Flatten())
 #    model.add(Dense(params[-1], activation=None))
 	model.add(Dense(params[-1], activation='relu'))
-
-    
 	return model
