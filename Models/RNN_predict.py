@@ -5,12 +5,12 @@ from keras import backend as K
 from download import dataset_loading
 def RNN_predict_new_numbers_simple(model_name):
 	dataset_loading()
-    ##Reshape
+
 	model = load_model(model_name)
 	n_input_size = int(model_name.split('-')[1].split(';')[0])
 	series = pd.read_csv('dataset/dataset.csv')
 	all_data = series.values[:, 3:]
-	x = np.reshape(all_data[-n_input_size:], (-1))
+	x = all_data[-n_input_size:]
 #	x = all_data[-n_input_size:] / 80
 	x = np.expand_dims(x, 0).astype('float32')/80
 	K.clear_session()
@@ -35,7 +35,7 @@ def RNN_predict_new_numbers(model_name):
 	n_input_size = int(model_name.split('-')[1].split(';')[0])
 	series = pd.read_csv('dataset/dataset.csv')
 	all_data = series.values[:, 3:]
-	x = np.reshape(all_data[-n_input_size:], (-1))
+	x = all_data[-n_input_size:]
 	x = np.expand_dims(x, 0).astype('float32') / 80
 	#x = np.expand_dims(x, 0)
 	K.clear_session()
@@ -98,7 +98,7 @@ def RNN_predict_past_date_simple(model_name, date):
 	for i in range(len(series) - 1, -1, -1):
 		if series.Month_Date[i] == month_date and series.Year[i] == year: break
 	all_data = series.values[:, 3:]
-	x = np.reshape(all_data[i-n_input_size:i], (-1))
+	x = all_data[i-n_input_size:i]
 	x = np.expand_dims(x, 0).astype('float32') / 80
 	y = all_data[i]
 	K.clear_session()
