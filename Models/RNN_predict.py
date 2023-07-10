@@ -18,14 +18,14 @@ def RNN_predict_new_numbers_simple(model_name):
 	K.clear_session()
 	numbers, probs = [], []
 	for item in result:
-		num1 = int(item)
-		num2 = int(item) + 1
-		if item - num1 <= 0.5:
-			numbers.append(num1)
-			probs.append(1 - abs(num1 - item))
-		else: 
+		num1 = min(int(abs(np.round(item))), 80)
+		num2 = min(int(abs(np.round(item))) + 1, 80)
+		if num1 == 0:
 			numbers.append(num2)
 			probs.append(1 - abs(num2 - item))
+		else: 
+			numbers.append(num1)
+			probs.append(1 - abs(num1 - item))
 	return numbers, probs
 
 def RNN_predict_new_numbers(model_name):
@@ -43,9 +43,9 @@ def RNN_predict_new_numbers(model_name):
 
 	numbers, probs = [], []
 	for item in result:
-		num1 = int(item)
-		num2 = int(item) + 1
-		if num1 not in numbers:
+		num1 = min(int(abs(np.round(item))), 80)
+		num2 = min(int(abs(np.round(item))) + 1, 80)
+		if num1 not in numbers and num1 > 0:
 			numbers.append(num1)
 			probs.append(1 - abs(num1 - item))
 		if num2 not in numbers:
@@ -106,14 +106,14 @@ def RNN_predict_past_date_simple(model_name, date):
 
 	numbers, probs = [], []
 	for item in result:
-		num1 = int(item)
-		num2 = int(item) + 1
-		if item - num1 <= 0.5:
-			numbers.append(num1)
-			probs.append(1 - abs(num1 - item))
-		else:
+		num1 = min(int(abs(np.round(item))), 80)
+		num2 = min(int(abs(np.round(item))) + 1, 80)
+		if num1 == 0:
 			numbers.append(num2)
 			probs.append(1 - abs(num2 - item))
+		else:
+			numbers.append(num1)
+			probs.append(1 - abs(num1 - item))
 	return numbers, y.tolist()
 
 def RNN_predict_past_date(model_name, date, pred_num=30):
@@ -133,9 +133,9 @@ def RNN_predict_past_date(model_name, date, pred_num=30):
 
 	numbers, probs = [], []
 	for item in result:
-		num1 = int(item)
-		num2 = int(item) + 1
-		if num1 not in numbers:
+		num1 = min(np.round(abs(item)), 80)
+		num2 = min(np.round(abs(item)) + 1, 80)
+		if num1 not in numbers and num1 > 0:
 			numbers.append(num1)
 			probs.append(1 - abs(num1 - item))
 		if num2 not in numbers:

@@ -39,7 +39,7 @@ def FFNN_predict_new_numbers(model_name):
 	all_data = series.values[:, 3:]
 	x = np.reshape(all_data[-n_input_size:], (-1))
 	x = np.expand_dims(x, 0).astype('float32')
-   # x = tf.convert_to_tensorflow(x)
+	# x = tf.convert_to_tensorflow(x)
 ##  x = np.array(x).astype('float32')
 	K.clear_session()
 	result = model.predict(x)[0]
