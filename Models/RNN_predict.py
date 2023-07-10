@@ -128,6 +128,7 @@ def RNN_predict_past_date(model_name, date, pred_num=30):
 	x = all_data[i-n_input_size:i] / 80
 	y = all_data[i]
 	x = np.expand_dims(x, 0)
+	K.clear_session()
 	result = model.predict(x)[0]
 
 	numbers, probs = [], []
