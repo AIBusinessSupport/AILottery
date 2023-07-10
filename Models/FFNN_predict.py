@@ -130,7 +130,7 @@ def FFNN_predict_past_date(model_name, date, pred_num=30):
 	for i in range(len(series) - 1, -1, -1):
 		if series.Month_Date[i] == month_date and series.Year[i] == year: break
 	all_data = series.values[:, 3:]
-	x = np.reshape(all_data[i-n_input_size:i], (-1))
+	x = all_data[i-n_input_size:i]
 	y = all_data[i]
 	x = np.expand_dims(x, 0).astype('float32')
 	K.clear_session()
