@@ -31,14 +31,14 @@ def CNN(params):
 ##
 def RNN(params):
 	model = Sequential()
-	model.add(SimpleRNN(units=params[1], activation="tanh", input_shape=(params[0], 20)))
+	model.add(SimpleRNN(units=params[1], activation="tanh", return_sequences=True, input_shape=(params[0], 20)))
 	#model.add(LSTM(params[1], return_sequences=True, input_shape=(params[0], 20)))
 	for param in params[2:-2]:
 		model.add(Dropout(0.001))
 		model.add(Bidirectional(LSTM(param, return_sequences=True)))
-		model.add(SimpleRNN(units=params, activation = "tanh", return_sequences = True))
+		model.add(SimpleRNN(units=param, activation = "tanh", return_sequences = True))
 	model.add(Bidirectional(LSTM(params[-2], return_sequences=True)))
-	model.add(SimpleRNN(units=params[2]))
+	model.add(SimpleRNN(units=params[-2]))
 	model.add(Flatten())
 #    model.add(Dense(params[-1], activation=None))
 	model.add(Dense(params[-1], activation='relu'))

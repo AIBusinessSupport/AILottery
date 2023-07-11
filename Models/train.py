@@ -103,7 +103,10 @@ def RNN_train(params, param_str, thread, new_training=True):
 	n_input_size = neurons[0]
 	
 	series = pd.read_csv(os.path.join(dataset_folder, 'dataset.csv'))
-	all_data = series.values[:, 3:]
+	all_data1 = series.values[:, 3:]
+	all_data2 = np.roll(all_data1, 1, axis=1)
+	all_data2[:, 0] = 0
+	all_data = all_data1 - all_data2
 	x, y = [], []
 	for i in range(n_input_size, len(all_data)):
 		x.append(all_data[i - n_input_size:i])

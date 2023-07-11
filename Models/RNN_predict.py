@@ -9,23 +9,45 @@ def RNN_predict_new_numbers_simple(model_name):
 	model = load_model(model_name)
 	n_input_size = int(model_name.split('-')[1].split(';')[0])
 	series = pd.read_csv('dataset/dataset.csv')
-	all_data = series.values[:, 3:]
+	all_data1 = series.values[:, 3:]
+	all_data2 = np.roll(all_data1, 1, axis=1)
+	all_data2[:, 0] = 0
+	all_data = all_data1 - all_data2
 	x = all_data[-n_input_size:]
 #	x = all_data[-n_input_size:] / 80
 	x = np.expand_dims(x, 0).astype('float32')/80
 	K.clear_session()
 	result = model.predict(x)[0]
 	K.clear_session()
-	numbers, probs = [], []
+	numbers1, probs1 = [], []
 	for item in result:
-		num1 = min(int(abs(np.round(item))), 80)
-		num2 = min(int(abs(np.round(item))) + 1, 80)
+		num1 = np.round(item) 
 		if num1 == 0:
-			numbers.append(num2)
-			probs.append(1 - abs(num2 - item))
-		else: 
-			numbers.append(num1)
-			probs.append(1 - abs(num1 - item))
+			num1 += 1
+			probs1.append(item)
+		else:
+			probs1.append(1 - abs(num1 - item))
+		numbers1.append(num1)
+	numbers1 = np.array(numbers1)
+	probs1 = np.array(probs1)
+
+	numbers, probs = [numbers1[0]], [probs1[0]]
+	for i in range(1, len(numbers1)):
+		s = np.sum(numbers[0:i+1])
+		p = np.mean(probs1[0:i+1])
+		if s > 80:
+			if 80.0 not in numbers:
+				numbers.append(80)
+				probs.append(p) 
+			else:
+				rand = np.random.randint(40+2*i, 80)
+				if rand not in numbers:
+					numbers.append(rand)
+					probs.append(0.2)
+		else:
+			numbers.append(s) 
+			probs.append(p)
+			
 	return numbers, probs
 
 def RNN_predict_new_numbers(model_name):
@@ -34,23 +56,44 @@ def RNN_predict_new_numbers(model_name):
 	model = load_model(model_name)
 	n_input_size = int(model_name.split('-')[1].split(';')[0])
 	series = pd.read_csv('dataset/dataset.csv')
-	all_data = series.values[:, 3:]
+	all_data1 = series.values[:, 3:]
+	all_data2 = np.roll(all_data1, 1, axis=1)
+	all_data2[:, 0] = 0
+	all_data = all_data1 - all_data2
 	x = all_data[-n_input_size:]
 	x = np.expand_dims(x, 0).astype('float32') / 80
 	#x = np.expand_dims(x, 0)
 	K.clear_session()
 	result = model.predict(x)[0]
-
-	numbers, probs = [], []
+	K.clear_session()
+	numbers1, probs1 = [], []
 	for item in result:
-		num1 = min(int(abs(np.round(item))), 80)
-		num2 = min(int(abs(np.round(item))) + 1, 80)
-		if num1 not in numbers and num1 > 0:
-			numbers.append(num1)
-			probs.append(1 - abs(num1 - item))
-		if num2 not in numbers:
-			numbers.append(num2)
-			probs.append(1 - abs(num2 - item))
+		num1 = np.round(item) 
+		if num1 == 0:
+			num1 += 1
+			probs1.append(item)
+		else:
+			probs1.append(1 - abs(num1 - item))
+		numbers1.append(num1)
+	numbers1 = np.array(numbers1)
+	probs1 = np.array(probs1)
+
+	numbers, probs = [numbers1[0]], [probs1[0]]
+	for i in range(1, len(numbers1)):
+		s = np.sum(numbers[0:i+1])
+		p = np.mean(probs1[0:i+1])
+		if s > 80:
+			if 80.0 not in numbers:
+				numbers.append(80)
+				probs.append(p) 
+			else:
+				rand = np.random.randint(40+2*i, 80)
+				if rand not in numbers:
+					numbers.append(rand)
+					probs.append(0.2)
+		else:
+			numbers.append(s) 
+			probs.append(p)
 	while len(numbers) < 40:
 		num1 = np.random.randint(1, 80)
 		if num1 not in numbers:
@@ -97,23 +140,42 @@ def RNN_predict_past_date_simple(model_name, date):
 	series = pd.read_csv('dataset/dataset.csv')
 	for i in range(len(series) - 1, -1, -1):
 		if series.Month_Date[i] == month_date and series.Year[i] == year: break
-	all_data = series.values[:, 3:]
+	all_data1 = series.values[:, 3:]
+	all_data2 = np.roll(all_data1, 1, axis=1)
+	all_data2[:, 0] = 0
+	all_data = all_data1 - all_data2
 	x = all_data[i-n_input_size:i]
 	x = np.expand_dims(x, 0).astype('float32') / 80
 	y = all_data[i]
 	K.clear_session()
 	result = model.predict(x)[0]
-
-	numbers, probs = [], []
+	numbers1, probs1 = [], []
 	for item in result:
-		num1 = min(int(abs(np.round(item))), 80)
-		num2 = min(int(abs(np.round(item))) + 1, 80)
+		num1 = np.round(item) 
 		if num1 == 0:
-			numbers.append(num2)
-			probs.append(1 - abs(num2 - item))
+			num1 += 1
+			probs1.append(item)
 		else:
-			numbers.append(num1)
-			probs.append(1 - abs(num1 - item))
+			probs1.append(1 - abs(num1 - item))
+		numbers1.append(num1)
+	numbers1 = np.array(numbers1)
+	probs1 = np.array(probs1)
+	numbers, probs = [numbers1[0]], [probs1[0]]
+	for i in range(1, len(numbers1)):
+		s = np.sum(numbers[0:i+1])
+		p = np.mean(probs1[0:i+1])
+		if s > 80:
+			if 80.0 not in numbers:
+				numbers.append(80)
+				probs.append(p) 
+			else:
+				rand = np.random.randint(40+2*i, 80)
+				if rand not in numbers:
+					numbers.append(rand)
+					probs.append(0.2)
+		else:
+			numbers.append(s) 
+			probs.append(p)
 	return numbers, y.tolist()
 
 def RNN_predict_past_date(model_name, date, pred_num=30):
@@ -124,23 +186,42 @@ def RNN_predict_past_date(model_name, date, pred_num=30):
 	series = pd.read_csv('dataset/dataset.csv')
 	for i in range(len(series) - 1, -1, -1):
 		if series.Month_Date[i] == month_date and series.Year[i] == year: break
-	all_data = series.values[:, 3:]
-	x = all_data[i-n_input_size:i] / 80
+	all_data1 = series.values[:, 3:]
+	all_data2 = np.roll(all_data1, 1, axis=1)
+	all_data2[:, 0] = 0
+	all_data = all_data1 - all_data2
+	x = all_data[i-n_input_size:i]
 	y = all_data[i]
-	x = np.expand_dims(x, 0)
+	x = np.expand_dims(x, 0).astype('float32') / 80
 	K.clear_session()
 	result = model.predict(x)[0]
-
-	numbers, probs = [], []
+	numbers1, probs1 = [], []
 	for item in result:
-		num1 = min(np.round(abs(item)), 80)
-		num2 = min(np.round(abs(item)) + 1, 80)
-		if num1 not in numbers and num1 > 0:
-			numbers.append(num1)
-			probs.append(1 - abs(num1 - item))
-		if num2 not in numbers:
-			numbers.append(num2)
-			probs.append(1 - abs(num2 - item))
+		num1 = np.round(item) 
+		if num1 == 0:
+			num1 += 1
+			probs1.append(item)
+		else:
+			probs1.append(1 - abs(num1 - item))
+		numbers1.append(num1)
+	numbers1 = np.array(numbers1)
+	probs1 = np.array(probs1)
+	numbers, probs = [numbers1[0]], [probs1[0]]
+	for i in range(1, len(numbers1)):
+		s = np.sum(numbers[0:i+1])
+		p = np.mean(probs1[0:i+1])
+		if s > 80:
+			if 80.0 not in numbers:
+				numbers.append(80)
+				probs.append(p) 
+			else:
+				rand = np.random.randint(40+2*i, 80)
+				if rand not in numbers:
+					numbers.append(rand)
+					probs.append(0.2)
+		else:
+			numbers.append(s) 
+			probs.append(p)
 	while len(numbers) < 40:
 		num1 = np.random.randint(1, 80)
 		if num1 not in numbers:
